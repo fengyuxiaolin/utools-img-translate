@@ -1,0 +1,22 @@
+{
+  "name": "utools-img-translate",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "element-plus": "^2.1.4",
+    "sass": "^1.49.9",
+    "vue": "^3.2.8"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^1.6.0",
+    "@vue/compiler-sfc": "^3.2.6",
+    "unplugin-auto-import": "^0.6.6",
+    "unplugin-vue-components": "^0.18.1",
+    "utools-api-types": "^2.6.4",
+    "vite": "^2.5.2"
+  }
+}

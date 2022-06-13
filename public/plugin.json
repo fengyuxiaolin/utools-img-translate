@@ -1,0 +1,27 @@
+{
+  "main": "index.html",
+  "logo": "logo.png",
+  "development": {
+    "main": "http://127.0.0.1:3000"
+  },
+  "preload": "preload.js",
+  "features": [
+    {
+      "code": "translate",
+      "explain": "将图片中的内容翻译为中文",
+      "cmds": [
+        "图片翻译",
+        {
+          "type": "img",
+          "label": "图片翻译"
+        }
+      ]
+    },{
+      "code": "screenAndTransl",
+      "explain": "截图并翻译",
+      "cmds": [
+        "截图并翻译"
+      ]
+    }
+  ]
+}
