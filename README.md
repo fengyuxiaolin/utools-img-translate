@@ -4,7 +4,7 @@
 
 一款适用于 utools 的图片翻译插件
 
-![image](https://user-images.githubusercontent.com/88593116/173315910-837b2e1b-ccfe-4e6a-9986-89d9969a72c1.png)
+![image](https://s1.328888.xyz/2022/06/13/pih8O.png)
 
 ## 安装
 
