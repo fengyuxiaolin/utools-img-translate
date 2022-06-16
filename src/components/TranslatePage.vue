@@ -31,6 +31,11 @@ function selectImg () {
 
 // 发送翻译请求
 function sendTrans (img) {
+  if (!img || !img instanceof Buffer) {
+    targetText.value = '请提供图片';
+    targetShow.value = 'text';
+    return;
+  }
   window.transImg(img, (data) => {
     targetText.value = data.text;
     if (data.code != 0) {
@@ -81,17 +86,18 @@ function scissorShot () {
 }
 
 function pageEnter () {
-  const enterCode = window.enterCode;
-  if (enterCode === 'screenAndTransl') {
-    const gt = setInterval(() => {
-      const img = getBaseInput();
-      if (img) {
-        clearInterval(gt);
+  const timer = setInterval(() => {
+    const enterCode = window.enterCode;
+    if (enterCode) {
+      clearInterval(timer);
+      if (enterCode === 'screenAndTransl') {
+        scissorShot();
+      } else if (enterCode === 'translate') {
+        getBaseInput();
       }
-    }, 600)
-  } else if (enterCode === 'translate') {
-    getBaseInput();
-  }
+    }
+  }, 600)
+
 }
 
 function openSettingsPage () {

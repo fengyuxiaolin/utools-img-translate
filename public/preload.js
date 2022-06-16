@@ -111,17 +111,21 @@ window.saveImg = function (img) {
   }
 }
 
+const scopeObj = {
+  code: '',
+  img: '',
+}
 utools.onPluginEnter(({ code, type, payload }) => {
   window.enterCode = code
+  scopeObj.code = code
   if (type === 'img') {
     // 将base64数据传入全局变量
     window.enterImg = payload
+    scopeObj.img = payload
   }
-  if (code === 'screenAndTransl') {
-    // 调用截图功能
-    window.utools.screenCapture(function (baseData) {
-      // 将base64数据传入全局变量
-      window.enterImg = baseData
-    })
-  }
+})
+
+utools.onPluginDetach(() => {
+  window.enterCode = scopeObj.code
+  window.enterImg = scopeObj.img
 })
