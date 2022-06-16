@@ -110,6 +110,10 @@ window.saveImg = function (img) {
     fs.writeFileSync(path, baseToBuffer(img))
   }
 }
+// 判断是否 Buffer
+window.isBuffer = function (obj) {
+  return Buffer.isBuffer(obj)
+}
 
 const scopeObj = {
   code: '',

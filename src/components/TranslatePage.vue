@@ -31,7 +31,7 @@ function selectImg () {
 
 // 发送翻译请求
 function sendTrans (img) {
-  if (!img || !img instanceof Buffer) {
+  if (!img || !(window.isBuffer(img))) {
     targetText.value = '请提供图片';
     targetShow.value = 'text';
     return;
