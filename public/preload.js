@@ -115,21 +115,4 @@ window.isBuffer = function (obj) {
   return Buffer.isBuffer(obj)
 }
 
-const scopeObj = {
-  code: '',
-  img: '',
-}
-utools.onPluginEnter(({ code, type, payload }) => {
-  window.enterCode = code
-  scopeObj.code = code
-  if (type === 'img') {
-    // 将base64数据传入全局变量
-    window.enterImg = payload
-    scopeObj.img = payload
-  }
-})
 
-utools.onPluginDetach(() => {
-  window.enterCode = scopeObj.code
-  window.enterImg = scopeObj.img
-})

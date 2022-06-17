@@ -22,10 +22,19 @@ function changePage (newPage) {
 </template>
 
 <style>
+:root {
+  --color: rgb(27, 27, 27);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color: rgb(238, 234, 234);
+  }
+}
 html,
 body,
 #app {
   width: 99%;
   height: 99%;
+  color: var(--color);
 }
 </style>

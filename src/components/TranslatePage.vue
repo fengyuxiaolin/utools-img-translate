@@ -9,7 +9,7 @@ const originSrc = ref(''),
   srcList = ref([]),
   targetText = ref(''),
   targetShow = ref('img'),
-  sp = ref();
+  sp = ref(); // 设置页
 
 // 获取拖拽的图片
 function dropImg (e) {
@@ -82,11 +82,14 @@ function scissorShot () {
     // 将 base64 图片转换为Buffer
     const imgFile = window.baseToBuffer(img);
     sendTrans(imgFile);
+    if (!window.isDetach) {
+      window.utools.redirect('图片翻译');
+    }
   })
 }
 
 function pageEnter () {
-  const timer = setInterval(() => {
+  let timer = setInterval(() => {
     const enterCode = window.enterCode;
     if (enterCode) {
       clearInterval(timer);
@@ -97,14 +100,34 @@ function pageEnter () {
       }
     }
   }, 600)
-
 }
 
 function openSettingsPage () {
   sp.value.open();
 }
 
-onMounted(pageEnter);
+onMounted(() => {
+  pageEnter();
+});
+
+const scopeObj = {
+  code: '',
+  img: '',
+}
+window.utools.onPluginEnter(({ code, type, payload }) => {
+  window.enterCode = code;
+  scopeObj.code = code
+  if (type === 'img') {
+    window.enterImg = payload;
+    scopeObj.img = payload
+  }
+  pageEnter();
+});
+utools.onPluginDetach(() => {
+  window.enterCode = scopeObj.code
+  window.enterImg = scopeObj.img
+  window.isDetach = true
+})
 </script>
 
 <template>
@@ -175,9 +198,10 @@ onMounted(pageEnter);
   width: 100%;
   height: 100%;
 }
-:deep(.el-upload__text) {
+.el-upload__text {
   text-align: center;
   line-height: 80px;
+  font-size: 16px;
 }
 .upload-demo {
   width: 100%;
@@ -195,7 +219,7 @@ onMounted(pageEnter);
 .imgBox .el-image {
   width: 48%;
   height: 340px;
-  background: #d9d9d9;
+  background: #8f8d8d44;
   text-align: center;
   line-height: 340px;
 }
