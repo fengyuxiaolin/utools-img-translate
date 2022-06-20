@@ -114,19 +114,12 @@ const scopeObj = {
   code: '',
   img: '',
 }
-window.utools.onPluginEnter(({ code, type, payload }) => {
-  window.enterCode = code;
-  scopeObj.code = code
-  if (type === 'img') {
-    window.enterImg = payload;
-    scopeObj.img = payload
-  }
+window.utools.onPluginEnter(() => {
+  window.pluginEnter(scopeObj);
   pageEnter();
-});
-utools.onPluginDetach(() => {
-  window.enterCode = scopeObj.code
-  window.enterImg = scopeObj.img
-  window.isDetach = true
+})
+window.utools.onPluginDetach(() => {
+  window.pluginDetach(scopeObj)
 })
 </script>
 

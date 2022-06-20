@@ -115,4 +115,24 @@ window.isBuffer = function (obj) {
   return Buffer.isBuffer(obj)
 }
 
+const scopeObj = {
+  code: '',
+  img: '',
+}
+window.pluginEnter = ({code, type, payload}) => {
+  window.enterCode = code
+  this.scopeObj.code = code
+  if (type === 'img') {
+    window.enterImg = payload
+    this.scopeObj.img = payload
+  }
+}
 
+window.pluginDetach = (scopeObj) => {
+  window.enterCode = this.scopeObj.code; 
+  window.enterImg = this.scopeObj.img
+  window.isDetach = true
+}
+
+window.utools.onPluginEnter(window.pluginEnter)
+window.utools.onPluginDetach(window.pluginDetach)
