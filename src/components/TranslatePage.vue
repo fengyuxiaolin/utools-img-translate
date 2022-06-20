@@ -9,7 +9,11 @@ const originSrc = ref(''),
   srcList = ref([]),
   targetText = ref(''),
   targetShow = ref('img'),
-  sp = ref(); // 设置页
+  sp = ref(), // 设置页
+  scopeObj = {
+    code: '',
+    img: '',
+  };
 
 // 获取拖拽的图片
 function dropImg (e) {
@@ -79,6 +83,8 @@ function scissorShot () {
   window.utools.screenCapture((img) => {
     originSrc.value = img;
     srcList.value[0] = img;
+    window.enterCode = "translate";
+    window.enterImg = '';
     // 将 base64 图片转换为Buffer
     const imgFile = window.baseToBuffer(img);
     sendTrans(imgFile);
@@ -110,12 +116,8 @@ onMounted(() => {
   pageEnter();
 });
 
-const scopeObj = {
-  code: '',
-  img: '',
-}
-window.utools.onPluginEnter(() => {
-  window.pluginEnter(scopeObj);
+window.utools.onPluginEnter((action) => {
+  window.pluginEnter(action, scopeObj);
   pageEnter();
 })
 window.utools.onPluginDetach(() => {

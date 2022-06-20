@@ -119,20 +119,24 @@ const scopeObj = {
   code: '',
   img: '',
 }
-window.pluginEnter = ({code, type, payload}) => {
+window.pluginEnter = ({ code, type, payload }, scopeObj) => {
   window.enterCode = code
-  this.scopeObj.code = code
+  scopeObj.code = code
   if (type === 'img') {
     window.enterImg = payload
-    this.scopeObj.img = payload
+    scopeObj.img = payload
   }
 }
 
 window.pluginDetach = (scopeObj) => {
-  window.enterCode = this.scopeObj.code; 
-  window.enterImg = this.scopeObj.img
+  window.enterCode = scopeObj.code
+  window.enterImg = scopeObj.img
   window.isDetach = true
 }
 
-window.utools.onPluginEnter(window.pluginEnter)
-window.utools.onPluginDetach(window.pluginDetach)
+window.utools.onPluginEnter((action) => {
+  window.pluginEnter(action, scopeObj)
+})
+window.utools.onPluginDetach(() => {
+  window.pluginDetach(scopeObj)
+})
