@@ -9,11 +9,7 @@ const originSrc = ref(''),
   srcList = ref([]),
   targetText = ref(''),
   targetShow = ref('img'),
-  sp = ref(), // 设置页
-  scopeObj = {
-    code: '',
-    img: '',
-  };
+  sp = ref() // 设置页;
 
 // 获取拖拽的图片
 function dropImg (e) {
@@ -117,11 +113,8 @@ onMounted(() => {
 });
 
 window.utools.onPluginEnter((action) => {
-  window.pluginEnter(action, scopeObj);
+  window.pluginEnter(action);
   pageEnter();
-})
-window.utools.onPluginDetach(() => {
-  window.pluginDetach(scopeObj)
 })
 </script>
 
