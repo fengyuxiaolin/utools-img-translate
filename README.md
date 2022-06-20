@@ -10,7 +10,7 @@
 
 ### 一. 下载 upx 插件包安装
 
-1. 点击去下载: ~~[github](https://github.com/fengyuxiaolin/utools-img-translate/releases/tag/v1.0.0-Alpha)~~ [点此去下载](https://gitee.com/fengyu_xiaolin/utools-img-translate/releases/v1.0.0-Alpha)
+1. 点击去下载: ~~[github](https://github.com/fengyuxiaolin/utools-img-translate/releases/tag/v1.0.2-Beta)~~ [点此去下载](https://gitee.com/fengyu_xiaolin/utools-img-translate/releases/v1.0.2-Beta)
 2. 选择下载的 upx 包并呼出 utools
 3. 选择「uTools 插件应用安装」进行安装
 
