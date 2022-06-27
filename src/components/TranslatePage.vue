@@ -1,14 +1,18 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
-import { Picture as IconPicture, Setting as IconSetting, Scissor as IconScissor } from '@element-plus/icons-vue';
+import { ref, onMounted } from 'vue';
+import { Picture as IconPicture, Setting as IconSetting, Scissor as IconScissor, Right as IconRight, Refresh as IconRefresh } from '@element-plus/icons-vue';
 defineEmits(['changePage']);
 
 let img = '';
-const originSrc = ref(''),
-  targetSrc = ref(''),
-  srcList = ref([]),
-  targetText = ref(''),
-  targetShow = ref('img'),
+const originSrc = ref(''), // 原图
+  loading = ref(false), // 加载中
+  targetSrc = ref(''), // 翻译图
+  srcList = ref([]), // 图片列表(原图、翻译图)
+  targetText = ref(''), // 翻译结果(文本)
+  targetShow = ref('img'), // 选择结果展示图片还是文字
+  fromLang = ref('auto'), // 源语言
+  toLang = ref('zh'), // 目标语言
+  langSelectList = ref([]), // 语言选择列表
   sp = ref() // 设置页;
 
 // 获取拖拽的图片
@@ -36,6 +40,7 @@ function sendTrans (img) {
     targetShow.value = 'text';
     return;
   }
+  loading.value = true;
   window.transImg(img, (data) => {
     targetText.value = data.text;
     if (data.code != 0) {
@@ -43,9 +48,10 @@ function sendTrans (img) {
       return;
     }
     const targetImgSrc = `data:image/png;base64,${data.img}`;
+    loading.value = false;
     targetSrc.value = targetImgSrc;
     srcList.value[1] = targetImgSrc;
-  });
+  }, { from: fromLang.value, to: toLang.value });
 }
 
 // 获取传入的 Base64 数据
@@ -90,6 +96,84 @@ function scissorShot () {
   })
 }
 
+// 重新翻译
+function translateRefresh () {
+  if (originSrc.value) {
+    img = window.baseToBuffer(originSrc.value);
+    sendTrans(img);
+  }
+}
+
+// 初始化语言选择列表
+function initLangSelectList () {
+  langSelectList.value = [
+    {
+      value: 'auto',
+      label: '自动检测'
+    }, {
+      value: 'zh',
+      label: '中文'
+    }, {
+      value: 'en',
+      label: '英语'
+    }, {
+      value: 'jp',
+      label: '日语'
+    }, {
+      value: 'kor',
+      label: '韩语'
+    }, {
+      value: 'fra',
+      label: '法语'
+    }, {
+      value: 'spa',
+      label: '西班牙语'
+    }, {
+      value: 'ru',
+      label: '俄语'
+    }, {
+      value: 'pt',
+      label: '葡萄牙语'
+    }, {
+      value: 'de',
+      label: '德语'
+    }, {
+      value: 'it',
+      label: '意大利语'
+    }, {
+      value: 'dan',
+      label: '丹麦语'
+    }, {
+      value: 'nl',
+      label: '荷兰语'
+    }, {
+      value: "may",
+      label: "马来语"
+    }, {
+      value: "swe",
+      label: "瑞典语"
+    }, {
+      value: "id",
+      label: "印尼语"
+    }, {
+      value: "pl",
+      label: "波兰语"
+    }, {
+      value: "rom",
+      label: "罗马尼亚语"
+    }, {
+      value: "tr",
+      label: "土耳其语"
+    }, {
+      value: "el",
+      label: "希腊语"
+    }, {
+      value: "hu",
+      label: "匈牙利语"
+    }
+  ]
+}
+
 function pageEnter () {
   let timer = setInterval(() => {
     const enterCode = window.enterCode;
@@ -109,6 +193,10 @@ function openSettingsPage () {
 }
 
 onMounted(() => {
+  // 初始化语言选择列表
+  initLangSelectList();
+
+  // 插件功能
   pageEnter();
 });
 
@@ -136,8 +224,8 @@ window.utools.onPluginEnter((action) => {
         </template>
       </el-image>
       <el-divider direction="vertical" />
-      <el-image v-if="targetShow == 'img'" :src="targetSrc" :preview-src-list="srcList" :initial-index="1"
-        fit="scale-down">
+      <el-image v-loading="loading" v-if="targetShow == 'img'" :src="targetSrc" hide-on-click-modal
+        :preview-src-list="srcList" :initial-index="1" fit="contain">
         <template #error>
           <div class="image-slot">
             <el-icon>
@@ -152,15 +240,43 @@ window.utools.onPluginEnter((action) => {
     </div>
     <el-divider />
     <div class="footer">
-      <div class='settingsBtn' @click="openSettingsPage">
-        <el-icon>
-          <icon-setting />
+      <el-tooltip popper-class="tooltip" :teleported="false" effect="light" content="打开设置" placement="top">
+        <div class='settingsBtn' @click="openSettingsPage">
+          <el-icon>
+            <icon-setting />
+          </el-icon>
+        </div>
+      </el-tooltip>
+      <el-tooltip popper-class="tooltip" :teleported="false" effect="light" content="截图并翻译" placement="top">
+        <div class='scissorBtn' @click="scissorShot">
+          <el-icon>
+            <icon-scissor />
+          </el-icon>
+        </div>
+      </el-tooltip>
+      <el-tooltip popper-class="tooltip" :teleported="false" effect="light" content="重新翻译" placement="top">
+        <div class='transBtn' @click="translateRefresh">
+          <el-icon>
+            <icon-refresh />
+          </el-icon>
+        </div>
+      </el-tooltip>
+      <div class='transLangBox'>
+        <el-select v-model="fromLang" class="langSelect" placeholder="源语言" size="small">
+          <el-option v-for="item in langSelectList" :key="item.value" :label="item.value" :value="item.value">
+            <span style="float: left">{{ item.label }}</span>
+            <span style="float: right; color: #6666; font-size: 13px; ">{{ item.value }}</span>
+          </el-option>
+        </el-select>
+        <el-icon class="rightArrow">
+          <icon-right />
         </el-icon>
-      </div>
-      <div class='scissorBtn' @click="scissorShot">
-        <el-icon>
-          <icon-scissor />
-        </el-icon>
+        <el-select v-model="toLang" class="langSelect" placeholder="目标语言" size="small">
+          <el-option v-for="item in langSelectList.slice(1)" :key="item.value" :label="item.value" :value="item.value">
+            <span style="float: left">{{ item.label }}</span>
+            <span style="float: right; color: #6666; font-size: 13px; ">{{ item.value }}</span>
+          </el-option>
+        </el-select>
       </div>
       <div v-if="originSrc != ''">
         <el-button v-if="targetShow == 'text'" @click="targetShow = 'img'">
@@ -237,22 +353,63 @@ window.utools.onPluginEnter((action) => {
 }
 
 .settingsBtn .el-icon,
-.scissorBtn .el-icon {
+.scissorBtn .el-icon,
+.transBtn .el-icon {
   font-size: 24px;
 }
 .settingsBtn :hover,
-.scissorBtn :hover {
+.scissorBtn :hover,
+.transBtn :hover {
   cursor: pointer;
   color: #31c2a5;
 }
-.settingsBtn {
+
+.settingsBtn,
+.scissorBtn,
+.transBtn {
   position: absolute;
-  right: 20px;
   bottom: 16px;
 }
+.settingsBtn {
+  right: 20px;
+}
 .scissorBtn {
-  position: absolute;
   right: 60px;
-  bottom: 16px;
+}
+.transBtn {
+  right: 100px;
+}
+
+.transLangBox {
+  position: absolute;
+  right: 142px;
+  bottom: 20px;
+}
+.langSelect {
+  width: 38px;
+  margin-left: 10px;
+}
+.langSelect :hover {
+  box-shadow: none;
+  border: none;
+}
+.langSelect :deep(.el-input__inner) {
+  padding-right: 7px;
+  text-align: center;
+  box-shadow: none;
+}
+.langSelect :deep(.el-input__suffix) {
+  border: none;
+  display: none;
+}
+.rightArrow {
+  vertical-align: middle;
+  margin-left: 10px;
+}
+.el-button {
+  background: #f3f4f1dd;
+}
+:deep(.tooltip) {
+  color: #353636;
 }
 </style>

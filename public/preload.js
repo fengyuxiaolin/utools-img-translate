@@ -8,8 +8,8 @@ const path = require('path')
 const urllib = require('urllib')
 
 const salt = getRandomInt(1000001, 10000000).toString()
-const from = 'auto'
-const to = 'zh'
+let from = 'auto'
+let to = 'zh'
 // TODO: 改成自己的APPID
 let appid = utools.dbStorage.getItem('appid_baidu') || ''
 // TODO: 改成自己的密钥
@@ -22,8 +22,11 @@ const version = '3'
 
 // 这里使用urllib库作为请求客户端， 你可以使用自己常用的库， 发送的请求符合RFC 1867 规范即可
 // https://www.ietf.org/rfc/rfc1867.txt
-window.transImg = function (file, cb) {
+window.transImg = function (file, cb, options) {
   const sign = md5(`${appid}${md5(file)}${salt}${cuid}${mac}${sk}`)
+
+  from = options.from || from
+  to = options.to || to
 
   const data = {
     from,
