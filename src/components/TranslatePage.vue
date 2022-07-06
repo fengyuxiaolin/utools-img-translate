@@ -51,6 +51,9 @@ function sendTrans (img) {
     loading.value = false;
     targetSrc.value = targetImgSrc;
     srcList.value[1] = targetImgSrc;
+    setTimeout(() => {
+      imgAutoHeight();
+    });
   }, { from: fromLang.value, to: toLang.value });
 }
 
@@ -65,6 +68,14 @@ function getBaseInput () {
     sendTrans(imgFile);
   }
   return img;
+}
+
+// 打开翻译的文本结果
+function openTextBox () {
+  targetShow.value = 'text';
+  setTimeout(() => {
+    imgAutoHeight();
+  });
 }
 
 // 复制翻译得到的图片结果
@@ -174,6 +185,34 @@ function initLangSelectList () {
   ]
 }
 
+// img 高度根据窗口高度自适应
+function imgAutoHeight () {
+  let widowHeight = window.innerHeight;
+  const imgHeight = widowHeight - 200;
+  console.log('wh: ', widowHeight);
+
+  // 图片高度设置
+  const imgBox = document.querySelectorAll('.imgHeight');
+  imgBox.forEach((item) => {
+    item.style.height = imgHeight + 'px';
+    item.style.lineHeight = imgHeight + 'px';
+  })
+
+  // 分割线高度设置
+  const divider = document.querySelectorAll('.imgBox .el-divider');
+  divider.forEach((item) => {
+    item.style.marginTop = `-${imgHeight - 6}px`;
+    item.style.height = imgHeight - 12 + 'px';
+  })
+
+  // 文本高度设置
+  const textBox = document.querySelectorAll('.imgBox .text-box');
+  textBox.forEach((item) => {
+    item.style.maxHeight = imgHeight + 'px';
+    item.style.lineHeight = 1.2 + 'rem';
+  })
+}
+
 function pageEnter () {
   let timer = setInterval(() => {
     const enterCode = window.enterCode;
@@ -193,6 +232,12 @@ function openSettingsPage () {
 }
 
 onMounted(() => {
+  // img 高度根据窗口高度自适应(用 js 做样式是可耻的!!! ...但我不会别的/狗头)
+  setTimeout(() => {
+    imgAutoHeight();
+  })
+  window.onresize = imgAutoHeight;
+
   // 初始化语言选择列表
   initLangSelectList();
 
@@ -213,8 +258,8 @@ window.utools.onPluginEnter((action) => {
         拖拽图片至此或点击选择图片进行翻译
       </div>
     </div>
-    <div class="imgBox">
-      <el-image :src="originSrc" :preview-src-list="srcList" fit="scale-down">
+    <div class="imgBox imgHeight">
+      <el-image :src="originSrc" class="imgHeight" :preview-src-list="srcList" fit="scale-down">
         <template #error>
           <div class="image-slot">
             <el-icon>
@@ -224,7 +269,7 @@ window.utools.onPluginEnter((action) => {
         </template>
       </el-image>
       <el-divider direction="vertical" />
-      <el-image v-loading="loading" v-if="targetShow == 'img'" :src="targetSrc" hide-on-click-modal
+      <el-image v-loading="loading" class="imgHeight" v-if="targetShow == 'img'" :src="targetSrc" hide-on-click-modal
         :preview-src-list="srcList" :initial-index="1" fit="contain">
         <template #error>
           <div class="image-slot">
@@ -282,7 +327,7 @@ window.utools.onPluginEnter((action) => {
         <el-button v-if="targetShow == 'text'" @click="targetShow = 'img'">
           图片结果
         </el-button>
-        <el-button v-if="targetShow == 'img'" @click="targetShow = 'text'">
+        <el-button v-if="targetShow == 'img'" @click="openTextBox">
           文本结果
         </el-button>
         <el-button v-if="targetShow == 'img'" @click="copyTargetImg">
@@ -322,16 +367,14 @@ window.utools.onPluginEnter((action) => {
 }
 .imgBox .el-image {
   width: 48%;
-  height: 340px;
   background: #8f8d8d44;
   text-align: center;
-  line-height: 340px;
+  position: relative !important;
 }
 .imgBox .text-box {
   display: inline-block;
   position: relative;
   width: 48%;
-  max-height: 340px;
   overflow: scroll;
   text-align: start;
   white-space: pre-wrap;
@@ -342,10 +385,7 @@ window.utools.onPluginEnter((action) => {
   height: 60px;
   font-size: 36px;
 }
-.imgBox .el-divider {
-  margin-top: -340px;
-  height: 330px;
-}
+
 .footer {
   float: left;
   margin-top: -10px;

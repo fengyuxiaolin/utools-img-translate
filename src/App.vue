@@ -37,4 +37,7 @@ body,
   height: 99%;
   color: var(--color);
 }
+body {
+  overflow: hidden;
+}
 </style>
