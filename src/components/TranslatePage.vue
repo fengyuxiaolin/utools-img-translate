@@ -1,5 +1,4 @@
 <script setup>
-import { ref, onMounted } from 'vue';
 import { Picture as IconPicture, Setting as IconSetting, Scissor as IconScissor, Right as IconRight, Refresh as IconRefresh } from '@element-plus/icons-vue';
 defineEmits(['changePage']);
 
